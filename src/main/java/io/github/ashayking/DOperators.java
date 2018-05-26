@@ -22,6 +22,35 @@ public class DOperators {
 		System.out.println("==================");
 		errorRecoveryOptrs();
 		System.out.println("==================");
+		actionOptrs();
+		System.out.println("==================");
+	}
+
+	private static void actionOptrs() {
+		System.out.println("=======DOONNEXT========");
+		observable
+			.doOnNext(s -> System.out.println("Processing: " + s))
+			.doOnComplete(() -> System.out.println("Source is done emitting!"))
+			.map(String::length)
+			.subscribe(i -> System.out.println("Received: " + i));
+		
+		System.out.println("=======DOONERROR========");
+		Observable.just(5, 2, 4, 0, 3, 2, 8)
+			.map(i -> 10 / i)
+			.doOnError(e -> System.out.println("Source failed!"))
+			.map(i -> 10 / i)
+				.doOnError(e -> System.out.println("Division failed!"))
+				.subscribe(
+						i -> System.out.println("RECEIVED: " + i),
+						e -> System.out.println("RECEIVED ERROR: " + e)
+				);
+		
+		System.out.println("======ONSUB AND ONDISPOSE=====");
+		Observable.just("Alpha", "Beta", "Gamma", "Delta",
+				"Epsilon")
+			.doOnSubscribe(d -> System.out.println("Subscribing!"))
+			//.doOnDispose(() -> System.out.println("Disposing!"))
+			.subscribe(i -> System.out.println("RECEIVED: " + i));
 	}
 
 	private static void errorRecoveryOptrs() {
